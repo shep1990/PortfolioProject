@@ -8,6 +8,7 @@ using PortfolioProject.DataAccess;
 using PortfolioProject.DataAccess.Models;
 using PortfolioProject.Web.Mediatr.Application.Handlers;
 using PortfolioProject.Web.Mediatr.Application.Queries;
+using PortfolioProject.Web.Mediatr.Application.Responses;
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
@@ -54,7 +55,7 @@ namespace PortfolioProject.Handlers.Test
 
             var sut = await handler.Handle(query, new CancellationToken());
 
-            sut.Portfolios.Should().Contain(x => x.Heading == "Portfolio Heading" && x.Description == "Portfolio Description");
+            sut.Data.Should().Contain(x => x.Heading == "Portfolio Heading" && x.Description == "Portfolio Description");
         }
 
         [TestMethod]
@@ -70,7 +71,19 @@ namespace PortfolioProject.Handlers.Test
 
             var sut = await handler.Handle(query, new CancellationToken());
 
-            sut.Portfolios.Count.Should().Be(0);
+            sut.Data.Count.Should().Be(0);
+        }
+
+        [TestMethod]
+        public async Task WhenAnExceptionIsThrown_ThenTheExceptionIsHandled()
+        {
+            var handler = new PortfolioDetailsHandler(null);
+            var query = new PortfolioDetailsQuery();
+
+            var sut = await handler.Handle(query, new CancellationToken());
+
+            sut.Success.Should().Be(false);
+            sut.Message.Should().Contain("Object reference not set to an instance of an object.");
         }
     }
 }

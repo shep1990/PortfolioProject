@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace PortfolioProject.Web.Mediatr.Application.Handlers
 {
-    public class PortfolioDetailsHandler : IRequestHandler<PortfolioDetailsQuery, PortfolioResponse>
+    public class PortfolioDetailsHandler : IRequestHandler<PortfolioDetailsQuery, PortfolioResponseList<PortfolioEntriesDto>>
     {
         PortfolioProjectDbContext _dbContext;
 
@@ -21,7 +21,7 @@ namespace PortfolioProject.Web.Mediatr.Application.Handlers
             _dbContext = dbContext;
         }
 
-        public async Task<PortfolioResponse> Handle(PortfolioDetailsQuery request, CancellationToken cancellationToken)
+        public async Task<PortfolioResponseList<PortfolioEntriesDto>> Handle(PortfolioDetailsQuery request, CancellationToken cancellationToken)
         {
             try
             {
@@ -37,16 +37,17 @@ namespace PortfolioProject.Web.Mediatr.Application.Handlers
                     });
                 });
 
-                return new PortfolioResponse
+                return new PortfolioResponseList<PortfolioEntriesDto>
                 {
                     Success = true,
-                    Portfolios = portfolioEntriesDto
+                    Data = portfolioEntriesDto
                 };
             }
             catch(Exception ex)
             {
-                return new PortfolioResponse
+                return new PortfolioResponseList<PortfolioEntriesDto>
                 {
+                    Message = ex.ToString(),
                     Success = false
                 };
             }
