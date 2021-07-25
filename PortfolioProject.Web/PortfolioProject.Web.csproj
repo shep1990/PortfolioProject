@@ -32,11 +32,22 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="ClientApp\src\app\app-routing.module.ts" />
+    <None Remove="ClientApp\src\app\models\portfolio.ts" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\PortfolioProject.DataAccess\PortfolioProject.DataAccess.csproj" />
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="ClientApp\src\app\services\" />
     <Folder Include="Mediatr\Application\Commands\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <TypeScriptCompile Include="ClientApp\src\app\app-routing.module.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\models\portfolio.ts" />
   </ItemGroup>
 
   <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">
