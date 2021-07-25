@@ -37,7 +37,7 @@ namespace PortfolioProject.Handlers.Test
         {
             return new List<object>()
             {
-                new Portfolio
+                new PortfolioEntries
                 {
                     Id = 1,
                     Heading = "Portfolio Heading",

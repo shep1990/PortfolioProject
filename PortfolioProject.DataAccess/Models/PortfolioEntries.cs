@@ -4,7 +4,7 @@ using System.Text;
 
 namespace PortfolioProject.DataAccess.Models
 {
-    public class Portfolio
+    public class PortfolioEntries
     {
         public int Id { get; set; }
         public string Heading { get; set; }
