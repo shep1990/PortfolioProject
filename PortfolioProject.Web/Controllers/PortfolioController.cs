@@ -38,30 +38,5 @@ namespace PortfolioProject.Web.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
-
-        // GET api/<PortfolioController>/5
-        [HttpGet("{id}")]
-        public string Get(int id)
-        {
-            return "value";
-        }
-
-        // POST api/<PortfolioController>
-        [HttpPost]
-        public void Post([FromBody] string value)
-        {
-        }
-
-        // PUT api/<PortfolioController>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
-        {
-        }
-
-        // DELETE api/<PortfolioController>/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
-        }
     }
 }
