@@ -1,7 +1,9 @@
 ﻿
 
 using FluentAssertions;
+using log4net;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using PortfolioProject.DataAccess;
@@ -20,6 +22,14 @@ namespace PortfolioProject.Handlers.Test
     [TestClass]
     public class PortfolioHandlerTests
     {
+        private Mock<ILogger<PortfolioDetailsHandler>> _loggerMock;
+
+        [TestInitialize]
+        public void Setup()
+        {
+            _loggerMock = new Mock<ILogger<PortfolioDetailsHandler>>();
+        }
+
         private static PortfolioProjectDbContext CreateDb([CallerMemberName] string memberName = "in-memory")
         {
             var dbOptions = new DbContextOptionsBuilder<PortfolioProjectDbContext>()
@@ -50,7 +60,7 @@ namespace PortfolioProject.Handlers.Test
         public async Task WhenAQueryIsPassedToGetPortfolioDetails_ThenReturnValidResults()
         {
             var db = CreateDb();
-            var handler = new PortfolioDetailsHandler(db);
+            var handler = new PortfolioDetailsHandler(db, _loggerMock.Object);
             var query = new PortfolioDetailsQuery();
 
             var sut = await handler.Handle(query, new CancellationToken());
@@ -66,24 +76,12 @@ namespace PortfolioProject.Handlers.Test
             db.RemoveRange(list);
             db.SaveChanges();
 
-            var handler = new PortfolioDetailsHandler(db);
+            var handler = new PortfolioDetailsHandler(db, _loggerMock.Object);
             var query = new PortfolioDetailsQuery();
 
             var sut = await handler.Handle(query, new CancellationToken());
 
             sut.Data.Count.Should().Be(0);
-        }
-
-        [TestMethod]
-        public async Task WhenAnExceptionIsThrown_ThenTheExceptionIsHandled()
-        {
-            var handler = new PortfolioDetailsHandler(null);
-            var query = new PortfolioDetailsQuery();
-
-            var sut = await handler.Handle(query, new CancellationToken());
-
-            sut.Success.Should().Be(false);
-            sut.Message.Should().Contain("Object reference not set to an instance of an object.");
         }
     }
 }

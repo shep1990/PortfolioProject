@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using PortfolioProject.Web.Controllers;
@@ -18,18 +19,20 @@ namespace PortfolioProject.Handlers.Test
     public class PortfolioControllerTests
     {
         private Mock<IMediator> _mediator;
+        private Mock<ILogger<PortfolioController>> _loggerMock;
         private PortfolioController _ctrl;
 
         [TestInitialize]
         public void TestInit()
         {
             _mediator = new Mock<IMediator>();
-            _ctrl = new PortfolioController(_mediator.Object);
+            _loggerMock = new Mock<ILogger<PortfolioController>>();
+            _ctrl = new PortfolioController(_mediator.Object, _loggerMock.Object);
         }
 
-        private void SetupExpectedReultsForPortfolio()
+        private async Task<PortfolioResponseList<PortfolioEntriesDto>> SetupExpectedReultsForPortfolio()
         {
-            var resp = new PortfolioResponseList<PortfolioEntriesDto> {
+            return new PortfolioResponseList<PortfolioEntriesDto> {
                 Success = true,
                 Data = new List<PortfolioEntriesDto>
                 {
@@ -41,19 +44,38 @@ namespace PortfolioProject.Handlers.Test
                     }
                 }
             };
-
-            _mediator.Setup(x => x.Send(It.IsAny<PortfolioDetailsQuery>(), It.IsAny<CancellationToken>()))
-                .Returns(() => Task.FromResult(resp));
         }
 
         [TestMethod]
         public async Task WhenPortfolioRecordsAreRequestedAndResultIsValid_ThenResultShouldBeOK()
         {
-            SetupExpectedReultsForPortfolio();
+            var resp = await SetupExpectedReultsForPortfolio();
+
+            _mediator.Setup(x => x.Send(It.IsAny<PortfolioDetailsQuery>(), It.IsAny<CancellationToken>()))
+                .Returns(() => Task.FromResult(resp));
 
             var result = await _ctrl.GetPortfolioItems() as OkObjectResult;
 
             _mediator.Verify(x => x.Send(It.IsAny<PortfolioDetailsQuery>(), default), Times.Once);
+        }
+
+        [TestMethod]
+        public async Task WhenPortfolioRecordsAreRequestedAndResultIsInvalid_ThenResultShouldThrowError()
+        {
+            var resp = await SetupExpectedReultsForPortfolio();
+
+            _mediator.Setup(x => x.Send(It.IsAny<PortfolioDetailsQuery>(), It.IsAny<CancellationToken>()))
+                .Throws(new Exception("Test Exception"));
+
+            var result = await _ctrl.GetPortfolioItems() as OkObjectResult;
+
+            _loggerMock.Verify(l => l.Log(
+                LogLevel.Error,
+                It.IsAny<EventId>(),
+                It.IsAny<It.IsAnyType>(),
+                It.IsAny<Exception>(),
+                (Func<It.IsAnyType, Exception, string>)It.IsAny<object>()),
+              Times.Once);
         }
     }
 }

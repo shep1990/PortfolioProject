@@ -9,6 +9,7 @@ import { PortfolioService } from '../services/portfolio.service';
 export class PortfolioComponent implements OnInit {
 
   portfolioList: any[];
+  errorMessage: string = '';
 
   constructor(
     private portfolioService: PortfolioService
@@ -23,7 +24,9 @@ export class PortfolioComponent implements OnInit {
   getPortfolioItems() {
     this.portfolioService.getAllPortfolioItems().subscribe((res: any) => {
       this.portfolioList = res.data;
-      console.log(this.portfolioList)
+    },
+    (error) => {
+      "There was an error"
     })
   }
 

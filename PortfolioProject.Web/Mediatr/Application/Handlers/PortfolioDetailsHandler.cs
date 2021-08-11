@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using PortfolioProject.DataAccess;
 using PortfolioProject.Web.Mediatr.Application.DTOs;
 using PortfolioProject.Web.Mediatr.Application.Queries;
@@ -12,13 +13,10 @@ using System.Threading.Tasks;
 
 namespace PortfolioProject.Web.Mediatr.Application.Handlers
 {
-    public class PortfolioDetailsHandler : IRequestHandler<PortfolioDetailsQuery, PortfolioResponseList<PortfolioEntriesDto>>
+    public class PortfolioDetailsHandler : BaseHandler, IRequestHandler<PortfolioDetailsQuery, PortfolioResponseList<PortfolioEntriesDto>>
     {
-        PortfolioProjectDbContext _dbContext;
-
-        public PortfolioDetailsHandler(PortfolioProjectDbContext dbContext)
+        public PortfolioDetailsHandler(PortfolioProjectDbContext dbContext, ILogger logger) : base(dbContext, logger)
         {
-            _dbContext = dbContext;
         }
 
         public async Task<PortfolioResponseList<PortfolioEntriesDto>> Handle(PortfolioDetailsQuery request, CancellationToken cancellationToken)
@@ -27,7 +25,7 @@ namespace PortfolioProject.Web.Mediatr.Application.Handlers
             {
                 var portfolioEntriesDto = new List<PortfolioEntriesDto>();
 
-                await _dbContext.PortfolioEntries.ForEachAsync(x =>
+                await DbContext.PortfolioEntries.ForEachAsync(x =>
                 {
                     portfolioEntriesDto.Add(new PortfolioEntriesDto
                     {
@@ -45,6 +43,8 @@ namespace PortfolioProject.Web.Mediatr.Application.Handlers
             }
             catch(Exception ex)
             {
+                Logger.LogError($"An error occurred");
+
                 return new PortfolioResponseList<PortfolioEntriesDto>
                 {
                     Message = ex.ToString(),
