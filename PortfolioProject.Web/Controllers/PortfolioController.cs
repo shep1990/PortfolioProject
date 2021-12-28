@@ -18,9 +18,9 @@ namespace PortfolioProject.Web.Controllers
     public class PortfolioController : ControllerBase
     {
         private readonly IMediator _mediator;
-        private readonly ILogger _logger;
+        private readonly ILogger<PortfolioController> _logger;
 
-        public PortfolioController(IMediator mediator, ILogger logger)
+        public PortfolioController(IMediator mediator, ILogger<PortfolioController> logger)
         {
             _mediator = mediator;
             _logger = logger;
@@ -31,7 +31,7 @@ namespace PortfolioProject.Web.Controllers
         {
             _logger.LogInformation("Retrieving portfolio items");
             try {
-                var response = await _mediator.Send(new PortfolioDetailsQuery());
+                var response = await _mediator.Send(new GitRetrievalQuery());
 
                 if (response.Success)
                     return Ok(response);

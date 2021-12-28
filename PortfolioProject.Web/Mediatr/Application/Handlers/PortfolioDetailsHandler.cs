@@ -15,7 +15,7 @@ namespace PortfolioProject.Web.Mediatr.Application.Handlers
 {
     public class PortfolioDetailsHandler : BaseHandler, IRequestHandler<PortfolioDetailsQuery, PortfolioResponseList<PortfolioEntriesDto>>
     {
-        public PortfolioDetailsHandler(PortfolioProjectDbContext dbContext, ILogger logger) : base(dbContext, logger)
+        public PortfolioDetailsHandler(PortfolioProjectDbContext dbContext, ILogger<PortfolioDetailsHandler> logger) : base(dbContext, logger)
         {
         }
 

@@ -23,11 +23,13 @@ namespace PortfolioProject.Handlers.Test
     public class PortfolioHandlerTests
     {
         private Mock<ILogger<PortfolioDetailsHandler>> _loggerMock;
+        private PortfolioProjectDbContext _db;
 
         [TestInitialize]
         public void Setup()
         {
             _loggerMock = new Mock<ILogger<PortfolioDetailsHandler>>();
+            _db = CreateDb();
         }
 
         private static PortfolioProjectDbContext CreateDb([CallerMemberName] string memberName = "in-memory")
@@ -59,8 +61,7 @@ namespace PortfolioProject.Handlers.Test
         [TestMethod]
         public async Task WhenAQueryIsPassedToGetPortfolioDetails_ThenReturnValidResults()
         {
-            var db = CreateDb();
-            var handler = new PortfolioDetailsHandler(db, _loggerMock.Object);
+            var handler = new PortfolioDetailsHandler(_db, _loggerMock.Object);
             var query = new PortfolioDetailsQuery();
 
             var sut = await handler.Handle(query, new CancellationToken());
@@ -71,12 +72,11 @@ namespace PortfolioProject.Handlers.Test
         [TestMethod]
         public async Task WhenAQueryIsPassedAndNoDataExists_ThenReturnPortfolioListWithACountOfZero()
         {
-            var db = CreateDb();
-            var list = db.PortfolioEntries;
-            db.RemoveRange(list);
-            db.SaveChanges();
+            var list = _db.PortfolioEntries;
+            _db.RemoveRange(list);
+            _db.SaveChanges();
 
-            var handler = new PortfolioDetailsHandler(db, _loggerMock.Object);
+            var handler = new PortfolioDetailsHandler(_db, _loggerMock.Object);
             var query = new PortfolioDetailsQuery();
 
             var sut = await handler.Handle(query, new CancellationToken());

@@ -30,17 +30,17 @@ namespace PortfolioProject.Handlers.Test
             _ctrl = new PortfolioController(_mediator.Object, _loggerMock.Object);
         }
 
-        private async Task<PortfolioResponseList<PortfolioEntriesDto>> SetupExpectedReultsForPortfolio()
+        private GitResponseList<GitDataDto> SetupExpectedResponseList()
         {
-            return new PortfolioResponseList<PortfolioEntriesDto> {
+            return new GitResponseList<GitDataDto>
+            {
                 Success = true,
-                Data = new List<PortfolioEntriesDto>
+                Data = new List<GitDataDto>
                 {
-                    new PortfolioEntriesDto
+                    new GitDataDto
                     {
-                        Heading = "Heading",
-                        Description = "Description",
-                        Id = 1
+                        full_name = "RepoName",
+                        html_url = "RepoUrl"
                     }
                 }
             };
@@ -49,22 +49,20 @@ namespace PortfolioProject.Handlers.Test
         [TestMethod]
         public async Task WhenPortfolioRecordsAreRequestedAndResultIsValid_ThenResultShouldBeOK()
         {
-            var resp = await SetupExpectedReultsForPortfolio();
+            var resp = SetupExpectedResponseList();
 
-            _mediator.Setup(x => x.Send(It.IsAny<PortfolioDetailsQuery>(), It.IsAny<CancellationToken>()))
+            _mediator.Setup(x => x.Send(It.IsAny<GitRetrievalQuery>(), It.IsAny<CancellationToken>()))
                 .Returns(() => Task.FromResult(resp));
 
             var result = await _ctrl.GetPortfolioItems() as OkObjectResult;
 
-            _mediator.Verify(x => x.Send(It.IsAny<PortfolioDetailsQuery>(), default), Times.Once);
+            _mediator.Verify(x => x.Send(It.IsAny<GitRetrievalQuery>(), default), Times.Once);
         }
 
         [TestMethod]
         public async Task WhenPortfolioRecordsAreRequestedAndResultIsInvalid_ThenResultShouldThrowError()
         {
-            var resp = await SetupExpectedReultsForPortfolio();
-
-            _mediator.Setup(x => x.Send(It.IsAny<PortfolioDetailsQuery>(), It.IsAny<CancellationToken>()))
+            _mediator.Setup(x => x.Send(It.IsAny<GitRetrievalQuery>(), It.IsAny<CancellationToken>()))
                 .Throws(new Exception("Test Exception"));
 
             var result = await _ctrl.GetPortfolioItems() as OkObjectResult;

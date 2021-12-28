@@ -8,6 +8,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using PortfolioProject.DataAccess;
+using PortfolioProject.Web.Mediatr.Application.Handlers;
 using System.Reflection;
 
 namespace PortfolioProject
@@ -35,6 +36,8 @@ namespace PortfolioProject
             {
                 configuration.RootPath = "ClientApp/dist";
             });
+
+            services.AddHttpClient<GitRetrievalHandler>("apiUrl", c => c.BaseAddress = new System.Uri("https://api.github.com/"));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -17,7 +17,7 @@ namespace PortfolioProject.Web.Mediatr.Application.Handlers
 {
     public class GitRetrievalHandler : BaseHandler, IRequestHandler<GitRetrievalQuery, GitResponseList<GitDataDto>>
     {
-        public GitRetrievalHandler(PortfolioProjectDbContext dbContext, ILogger logger) : base(dbContext, logger)
+        public GitRetrievalHandler(PortfolioProjectDbContext dbContext, ILogger<GitRetrievalHandler> logger, IHttpClientFactory httpClient) : base(dbContext, logger, httpClient)
         {
         }
 
@@ -26,11 +26,10 @@ namespace PortfolioProject.Web.Mediatr.Application.Handlers
             try { 
                 var portfolioEntriesDto = new List<PortfolioEntriesDto>();
 
-                var httpClient = new HttpClient();
-                httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                httpClient.DefaultRequestHeaders.UserAgent.TryParseAdd("request");
+                var httpClient = CreateHttpClient();
                 var repo = "Shep1990";
-                var response = httpClient.GetStringAsync($"https://api.github.com/users/{repo}/repos").Result;
+                var baseAddress = httpClient.BaseAddress;
+                var response = await httpClient.GetStringAsync($"{baseAddress}users/{repo}/repos");
                 var result = JsonConvert.DeserializeObject<List<GitDataDto>>(response);
 
                 return new GitResponseList<GitDataDto>
@@ -49,6 +48,15 @@ namespace PortfolioProject.Web.Mediatr.Application.Handlers
                     Success = false
                 };
             }
+        }
+
+        private HttpClient CreateHttpClient()
+        {
+            var httpClient = ClientFactory.CreateClient("apiUrl");
+            httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            httpClient.DefaultRequestHeaders.UserAgent.TryParseAdd("request");
+
+            return httpClient;
         }
     }
 }
