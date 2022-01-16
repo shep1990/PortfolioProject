@@ -2,15 +2,17 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PortfolioProject.DataAccess;
 
 namespace PortfolioProject.DataAccess.Migrations
 {
     [DbContext(typeof(PortfolioProjectDbContext))]
-    partial class PortfolioProjectDbContextDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220116170122_AddCvContentTable")]
+    partial class AddCvContentTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

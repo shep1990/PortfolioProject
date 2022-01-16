@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { CV } from '../models/CV';
 import { Portfolio } from '../models/portfolio';
 
 @Injectable({
@@ -17,4 +18,7 @@ export class PortfolioService {
     return this.http.get<Portfolio[]>(this.baseUrl + 'api/portfolio/items')
   }
 
+  getAllCVItems(): Observable<CV[]> {
+    return this.http.get<CV[]>(this.baseUrl + 'api/cv/cvItems')
+  }
 }

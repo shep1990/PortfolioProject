@@ -8,12 +8,14 @@ import { NavMenuComponent } from './nav-menu/nav-menu.component';
 import { AppRoutingModule } from './app-routing.module';
 import { PortfolioComponent } from './portfolio/portfolio.component';
 import { PortfolioService } from './services/portfolio.service';
+import { CvComponent } from './cv-component/cv.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     NavMenuComponent,
-    PortfolioComponent
+    PortfolioComponent,
+    CvComponent
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
